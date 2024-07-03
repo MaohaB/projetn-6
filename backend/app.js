@@ -1,9 +1,9 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const app = express();
 const PORT = 4000;
 const cors = require("cors");
-const mongoose = require('mongoose');
-mongoose.connect('mongodb+srv://jimbob:<PASSWORD>@cluster0-pme76.mongodb.net/test?retryWrites=true&w=majority',
+mongoose.connect('mongodb+srv://maoh_:saQXm4NsrcMqU9vY@cluster0.x5n4n7y.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
     { useNewUrlParser: true,
       useUnifiedTopology: true })
     .then(() => console.log('Connexion à MongoDB réussie !'))
@@ -17,7 +17,7 @@ app.use(express.json());
   
 app.listen(PORT, function(err){
     if (err) console.log("Error in server setup")
-    console.log("Server listening on Port", PORT);
+    console.log("Server listening on Port: ", PORT);
 })
 
 app.post('/api/auth/signup', UserSignup) ; 
