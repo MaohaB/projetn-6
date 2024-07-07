@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-require('./mongodb/mongo.js');
+const { User } = require('./mongodb/mongo.js');
 
 //const User = require('./models/user.js');
 
@@ -22,9 +22,9 @@ app.listen(PORT, function(err){
 const users = [];
 app.post('/api/auth/signup', UserSignup) ;
 
-function UserSignup(req,res) {
+async function UserSignup(req,res) {
 const body = req.body;
-console.log("body", body)
+//console.log("body", body)
 const email = req.body.email
 const password = req.body.password
 
@@ -32,6 +32,24 @@ const user = {
     email: email,
     password: password
 };
+
+const Userdatabase = await User.findOne({ 
+    email: body.email
+});
+console.log("Userdatabase", Userdatabase)
+if (Userdatabase != null) {
+    res.status(400).send("Email déjà utiisé");
+    return;
+}
+
+try {
+   await User.create(user);
+} catch (e) {
+    console.error(e);
+    res.status(500).send("Something went wrong");
+    return;
+}
+
 // message string
 res.send("sign up");
 };
@@ -43,6 +61,12 @@ function UserLogin(req,res) {
 const body = req.body;
 console.log("body", body)
 console.log("existing user:", users);
+
+const Userdatabase = users.find((user) => user.email === email);
+if (Userdatabase != null) {
+    res.status(400).send("Email déjà utiisé");
+    return;
+}
 // userID + token
 res.send({
     userId: "string",
