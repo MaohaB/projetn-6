@@ -51,24 +51,31 @@ try {
 }
 
 // message string
-res.send("sign up");
+res.send("sign up user: "+ email);
 };
 
 
 
 app.post('/api/auth/login', UserLogin) ;
-function UserLogin(req,res) {
+async function UserLogin(req,res) {
 const body = req.body;
 console.log("body", body)
-console.log("existing user:", users);
 
-const Userdatabase = users.find((user) => user.email === email);
-if (Userdatabase != null) {
-    res.status(400).send("Email déjà utiisé");
+const Userdatabase = await User.findOne({ 
+    email: body.email
+});
+console.log(Userdatabase)
+if (Userdatabase == null) {
+    res.status(401).send("Cet utilisateur n'existe pas");
+    return;
+}
+const passwordfromDatabase = Userdatabase.password;
+if (passwordfromDatabase != body.password) {
+    res.status(401).send("Mauvais couple d'identifiants");
     return;
 }
 // userID + token
 res.send({
-    userId: "string",
+    userId: Userdatabase._id,
     token: "string"});
 };
