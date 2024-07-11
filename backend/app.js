@@ -2,6 +2,10 @@ const express = require('express');
 const mongoose = require('mongoose');
 const { User } = require('./mongodb/mongo.js');
 
+
+const bcrypt = require('bcrypt');
+const userRoutes = require('./routes/user');
+
 //const User = require('./models/user.js');
 
 const app = express();
@@ -30,7 +34,7 @@ const password = req.body.password
 
 const user = {
     email: email,
-    password: password
+    password: hashPassword(password)
 };
 
 const Userdatabase = await User.findOne({ 
@@ -38,7 +42,7 @@ const Userdatabase = await User.findOne({
 });
 console.log("Userdatabase", Userdatabase)
 if (Userdatabase != null) {
-    res.status(400).send("Email déjà utiisé");
+    res.status(400).send(email + " déjà utiisé");
     return;
 }
 
@@ -55,7 +59,16 @@ res.send("sign up user: "+ email);
 };
 
 
+// Hasher le password
+function hashPassword(password) {
+    const saltRounds = 10;
+    const salt = bcrypt.genSaltSync(saltRounds);
+    const hash = bcrypt.hashSync(password, salt);
+    return hash;
+}
 
+
+//fonction login
 app.post('/api/auth/login', UserLogin) ;
 async function UserLogin(req,res) {
 const body = req.body;
@@ -66,16 +79,20 @@ const Userdatabase = await User.findOne({
 });
 console.log(Userdatabase)
 if (Userdatabase == null) {
-    res.status(401).send("Cet utilisateur n'existe pas");
+    res.status(401).send("Cet utilisateur,"+ email +", n'existe pas");
     return;
 }
 const passwordfromDatabase = Userdatabase.password;
-if (passwordfromDatabase != body.password) {
-    res.status(401).send("Mauvais couple d'identifiants");
-    return;
-}
+bcrypt.compare(body.password, passwordfromDatabase)
+.then(valid => {
+    if (!valid) {
+        return res.status(401).send("Mauvais couple d'identifiants");
+    }
 // userID + token
 res.send({
     userId: Userdatabase._id,
     token: "string"});
-};
+}
+)
+
+}
