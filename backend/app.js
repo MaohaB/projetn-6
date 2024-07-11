@@ -11,6 +11,7 @@ const userRoutes = require('./routes/user');
 const app = express();
 const PORT = 4000;
 const cors = require("cors");
+const jwt = require('jsonwebtoken');
 
 app.use(cors());
 app.use(express.json());
@@ -91,7 +92,12 @@ bcrypt.compare(body.password, passwordfromDatabase)
 // userID + token
 res.send({
     userId: Userdatabase._id,
-    token: "string"});
+    token: jwt.sign(
+        { userId: Userdatabase._id },
+        'RANDOM_TOKEN_SECRET',
+        { expiresIn: '24h' }
+    )
+});
 }
 )
 
