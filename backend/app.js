@@ -1,33 +1,51 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const { User } = require('./mongodb/mongo.js');
+const { User } = require('./models/user.js');
+const { Book } = require('./models/book');
 const {testbooks} = require('./models/testbooks.js')
 
 
-const bcrypt = require('bcrypt');
-const userRoutes = require('./routes/user');
+//const { UserLogin, UserLogin } = require("./controllers/user.js")
+//const { postBook, getBooks } = require("./controllers/book.js")
+//const { booksRouter } = require("./controllers/book.js")
+//const { usersRouter } = require("./controllers/user.js")
 
-//const User = require('./models/user.js');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const multer = require('multer')
+
+const upload = multer({
+    dest: "uploads/"
+});
+
 
 const app = express();
-const PORT = 4000;
 const cors = require("cors");
-const jwt = require('jsonwebtoken');
+
+app.get('/', function (req, res) { res.send("Hello World!");});
 
 app.use(cors());
 app.use(express.json());
+ app.use("/uploads", express.static("uploads"));
 
-//app.get('/', function (req, res) { res.send("Hello World!");});
-  
+const PORT = 4000;
 app.listen(PORT, function(err){
     if (err) console.log("Error in server setup")
     console.log("Server listening on Port: ", PORT);
 })
 
-
-const users = [];
 app.post('/api/auth/signup', UserSignup) ;
+app.post('/api/auth/login', UserLogin) ;
+app.get('/api/books', getBooks);
+app.post('/api/books',upload.single("image"), postBook);
 
+// app.use("/api/books", booksRouter);
+// app.use("/api/auth", usersRouter);
+
+//User.deleteMany({}).then(() => {console.log("users deleted");})
+//Book.deleteMany({}).then(() => {console.log("books deleted");})
+
+// S'inscrire
 async function UserSignup(req,res) {
 const body = req.body;
 //console.log("body", body)
@@ -103,9 +121,38 @@ res.send({
 
 }
 
+
+
+
+
+// fonction afficher les livres
 app.get('/api/books', getBooks);
 function getBooks(req,res) { 
     res.send(testbooks);
 }
 
-// User.deleteMany({}).then(() => {console.log("users deleted");})
+
+// fonction Ajouter un livre
+app.post('/api/books',upload.single("image"), postBook);
+async function postBook(req,res) {
+    const file = req.file;
+    console.log("file.", file);
+    const body = req.body;
+    console.log("body", body);
+    const Stringbook = body.book;
+    const book = JSON.parse(Stringbook);
+    book.imageUrl = file.path;
+    try {
+    const result = await Book.create(book);
+    console.log('result',result);
+    res.send("new book: "+ book.title+ " posted");
+} catch (e) {
+    console.error(e);
+    res.status(500).send("Something went wrong:" + e.message);
+    return;
+}
+};
+
+function importexistingBooks(testbooks){
+
+}
