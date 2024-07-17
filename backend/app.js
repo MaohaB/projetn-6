@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const { User } = require('./mongodb/mongo.js');
+const {testbooks} = require('./models/testbooks.js')
 
 
 const bcrypt = require('bcrypt');
@@ -59,7 +60,6 @@ try {
 res.send("sign up user: "+ email);
 };
 
-
 // Hasher le password
 function hashPassword(password) {
     const saltRounds = 10;
@@ -102,3 +102,10 @@ res.send({
 )
 
 }
+
+app.get('/api/books', getBooks);
+function getBooks(req,res) { 
+    res.send(testbooks);
+}
+
+// User.deleteMany({}).then(() => {console.log("users deleted");})
