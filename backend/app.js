@@ -127,8 +127,9 @@ res.send({
 
 // fonction afficher les livres
 app.get('/api/books', getBooks);
-function getBooks(req,res) { 
-    res.send(testbooks);
+async function getBooks(req,res) { 
+    const databasebooks = await Book.find();
+    res.send(databasebooks);
 }
 
 
@@ -145,7 +146,7 @@ async function postBook(req,res) {
     try {
     const result = await Book.create(book);
     console.log('result',result);
-    res.send("new book: "+ book.title+ " posted");
+    res.send("Le livre "+ book.title+ " a bien été ajouté !");
 } catch (e) {
     console.error(e);
     res.status(500).send("Something went wrong:" + e.message);
@@ -153,6 +154,16 @@ async function postBook(req,res) {
 }
 };
 
-function importexistingBooks(testbooks){
-
-}
+// fonction pour ajouté des livres "test" à la base de donnée mongo
+async function pushExistingBooks(books) {
+    for (const book of books) {
+        try {
+          const result = await Book.create(book);
+          console.log(`Le livre ${result.title} de ${result.author} a été inséré à la base de données`);
+        } catch (error) {
+          console.error(`Erreur lors de l'insertion du livre: ${error.message}`);
+        }
+      }
+    console.log('Tous les livres ont été traités');
+    };
+// pushExistingBooks(testbooks)

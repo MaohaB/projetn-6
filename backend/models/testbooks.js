@@ -5,7 +5,7 @@ const testbooks = [
     title: "Les Misérables",
     author: "Victor Hugo",
     imageUrl:
-      "https://www.gutenberg.org/cache/epub/17489/pg17489.cover.medium.jpg",
+      "https://cdn1.booknode.com/book_cover/83/les_miserables-83116-264-432.jpg",
     year: "1862",
     genre: "Roman historique",
     ratings: [
@@ -21,7 +21,7 @@ const testbooks = [
     title: "Moby Dick",
     author: "Herman Melville",
     imageUrl:
-      "https://www.gutenberg.org/cache/epub/2701/pg2701.cover.medium.jpg",
+    "https://media.electre-ng.com/images/image-id/b8d3ec001de0c0e250e6b657d1d541521bf772cd03f5402b62e1f985e2acbfd5.jpg",
     year: "1851",
     genre: "Roman d'aventure",
     ratings: [
@@ -54,7 +54,7 @@ const testbooks = [
     userId: "1",
     title: "Frankenstein",
     author: "Mary Shelley",
-    imageUrl: "https://www.gutenberg.org/cache/epub/84/pg84.cover.medium.jpg",
+    "imageUrl": "https://m.media-amazon.com/images/I/61s7GIbzxaL._AC_UF1000,1000_QL80_.jpg",
     year: "1818",
     genre: "Roman gothique",
     ratings: [
@@ -86,7 +86,7 @@ const testbooks = [
     title: "Candide",
     author: "Voltaire",
     imageUrl:
-      "https://www.gutenberg.org/cache/epub/4650/pg4650.cover.medium.jpg",
+      "https://m.media-amazon.com/images/I/61j3+Vjz0ZL._AC_UF1000,1000_QL80_.jpg",
     year: "1759",
     genre: "Conte philosophique",
     ratings: [
@@ -103,7 +103,7 @@ const testbooks = [
     title: "Le Comte de Monte-Cristo",
     author: "Alexandre Dumas",
     imageUrl:
-      "https://www.gutenberg.org/cache/epub/17989/pg17989.cover.medium.jpg",
+      "https://pictures.abebooks.com/isbn/9782081366503-fr.jpg",
     year: "1844",
     genre: "Roman d'aventure",
     ratings: [
@@ -114,24 +114,6 @@ const testbooks = [
     ],
     averageRating: "5",
   },
-
-  {
-    userId: "1",
-    title: "Le Seigneur des Anneaux",
-    author: "J.R.R. Tolkien",
-    imageUrl:
-      "https://upload.wikimedia.org/wikipedia/en/e/e9/First_Single_Volume_Edition_of_The_Lord_of_the_Rings.gif",
-    year: "1954",
-    genre: "Fantasy épique",
-    ratings: [
-      {
-        userId: "2",
-        grade: "5",
-      },
-    ],
-    averageRating: "5",
-  },
-
 
 
   {
@@ -170,7 +152,7 @@ const testbooks = [
     userId: "1",
     title: "Les Hauts de Hurlevent",
     author: "Emily Brontë",
-    imageUrl: "https://www.gutenberg.org/cache/epub/768/pg768.cover.medium.jpg",
+    imageUrl: "https://www.livredepoche.com/sites/default/files/images/livres/couv/9782253004752-001-T.jpeg",
     year: "1847",
     genre: "Roman romantique",
     ratings: [
@@ -186,7 +168,7 @@ const testbooks = [
     userId: "1",
     title: "Le Portrait de Dorian Gray",
     author: "Oscar Wilde",
-    imageUrl: "https://www.gutenberg.org/cache/epub/174/pg174.cover.medium.jpg",
+    imageUrl: "https://images.epagine.fr/869/9782371130869_1_75.jpg",
     year: "1890",
     genre: "Roman philosophique",
     ratings: [
