@@ -11,7 +11,7 @@ const testbooks = [
     ratings: [
       {
         userId: "2",
-        grade: "5",
+        grade: "1",
       },
     ],
     averageRating: "5",
@@ -27,7 +27,7 @@ const testbooks = [
     ratings: [
       {
         userId: "2",
-        grade: "4",
+        grade: "2",
       },
     ],
     averageRating: "4",
@@ -60,7 +60,7 @@ const testbooks = [
     ratings: [
       {
         userId: "2",
-        grade: "4",
+        grade: "5",
       },
     ],
     averageRating: "4",
@@ -75,7 +75,7 @@ const testbooks = [
     ratings: [
       {
         userId: "2",
-        grade: "5",
+        grade: "3",
       },
     ],
     averageRating: "5",
@@ -92,7 +92,7 @@ const testbooks = [
     ratings: [
       {
         userId: "2",
-        grade: "4",
+        grade: "3",
       },
     ],
     averageRating: "4",
@@ -126,7 +126,7 @@ const testbooks = [
     ratings: [
       {
         userId: "2",
-        grade: "4",
+        grade: "2",
       },
     ],
     averageRating: "4",
@@ -174,7 +174,7 @@ const testbooks = [
     ratings: [
       {
         userId: "2",
-        grade: "5",
+        grade: "2",
       },
     ],
     averageRating: "5",

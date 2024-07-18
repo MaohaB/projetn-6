@@ -14,9 +14,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const multer = require('multer')
 
-const upload = multer({
-    dest: "uploads/"
-});
+// const upload = multer({ dest: "uploads/"});
 
 
 const app = express();
@@ -26,7 +24,20 @@ app.get('/', function (req, res) { res.send("Hello World!");});
 
 app.use(cors());
 app.use(express.json());
- app.use("/uploads", express.static("uploads"));
+app.use("/uploads", express.static("uploads"));
+
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, "uploads")
+    },
+    filename: function (req, file, cb) {
+      cb(null, file.fieldname + "_" + Date.now() );
+    },
+
+})
+const upload = multer({ storage: storage })
+
 
 const PORT = 4000;
 app.listen(PORT, function(err){
@@ -42,8 +53,8 @@ app.post('/api/books',upload.single("image"), postBook);
 // app.use("/api/books", booksRouter);
 // app.use("/api/auth", usersRouter);
 
-//User.deleteMany({}).then(() => {console.log("users deleted");})
-//Book.deleteMany({}).then(() => {console.log("books deleted");})
+//User.deleteMany({}).then(() => {console.log("All users deleted");})
+//Book.deleteMany({}).then(() => {console.log("All books deleted");})
 
 // S'inscrire
 async function UserSignup(req,res) {
@@ -137,12 +148,13 @@ async function getBooks(req,res) {
 app.post('/api/books',upload.single("image"), postBook);
 async function postBook(req,res) {
     const file = req.file;
-    console.log("file.", file);
+    const filename = file.filename;
+    console.log("file.", filename);
     const body = req.body;
     console.log("body", body);
     const Stringbook = body.book;
     const book = JSON.parse(Stringbook);
-    book.imageUrl = file.path;
+    book.imageUrl = "http://localhost:4000/uploads/" +filename;
     try {
     const result = await Book.create(book);
     console.log('result',result);
@@ -166,4 +178,4 @@ async function pushExistingBooks(books) {
       }
     console.log('Tous les livres ont été traités');
     };
-// pushExistingBooks(testbooks)
+ //pushExistingBooks(testbooks)
