@@ -2,9 +2,18 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-const { User } = require('./models/user.js');
+const { User } = require('../models/user.js');
+
+
+const app = express();
+const cors = require("cors");
+
 
 const jwt = require('jsonwebtoken');
+
+app.use(cors());
+app.use(express.json());
+app.use("/uploads", express.static("uploads"));
 
 
 
@@ -87,13 +96,5 @@ res.send({
 
 
 
-
-
-
-const usersRouter = express.Router();
-usersRouter.get("/", UserSignup);
-usersRouter.get("/", UserLogin);
-module.exports = { usersRouter};
-
-
-//module.exports = { UserSignup, UserLogin };
+// Exporter les fonctions
+module.exports = { UserSignup, UserLogin };
