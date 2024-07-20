@@ -59,6 +59,19 @@ async function getBookbyID(req,res) {
 }
 };
 
+async function getBestRating(req,res) {
+  try {
+const bestrated = await Book.find().sort({ averageRating: -1}).limit(3);
+bestrated.forEach(book => {
+  book.imageUrl = book.imageUrl
+});
+res.send(bestrated);
+} catch (e) {
+  console.error(e);
+  res.status(500).send("Something went wrong"+ e.message);
+}
+}
+
 // fonction pour ajouté des livres "test" à la base de donnée mongo
 async function pushExistingBooks(books) {
     for (const book of books) {
@@ -76,4 +89,4 @@ async function pushExistingBooks(books) {
 
 
  // Exporter les fonctions
-module.exports = { getBooks, postBook, getBookbyID};
+module.exports = { getBooks, postBook, getBookbyID, getBestRating};
