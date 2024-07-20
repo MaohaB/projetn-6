@@ -3,27 +3,27 @@ const mongoose = require('mongoose');
 const { User } = require('./models/user.js');
 const { Book } = require('./models/book');
 
-
-// importer les depuis les routes
-const { booksRouter } = require("./routes/book.js")
-const { usersRouter } = require("./routes/user.js")
-
-
 const app = express();
 const cors = require("cors");
-
 app.get('/', function (req, res) { res.send("Hello World!");});
 
 app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
 
-
 const PORT = 4000;
 app.listen(PORT, function(err){
     if (err) console.log("Error in server setup")
     console.log("Server listening on Port: ", PORT);
 })
+
+// importer les depuis les routes
+const { booksRouter } = require("./routes/book.js")
+const { usersRouter } = require("./routes/user.js")
+
+
+
+
 
 
 app.use("/api/books", booksRouter);

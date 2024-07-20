@@ -43,6 +43,22 @@ async function postBook(req,res) {
 }
 };
 
+async function getBookbyID(req,res) {
+  const id = req.params.id;
+  try {
+  const singlebook = await Book.findById(id)
+  if ( singlebook == null) {
+    res.status(404).send("Book not found");
+  return;
+  }
+  singlebook.imageUrl = singlebook.imageUrl
+  res.send(singlebook);
+} catch (e) {
+  console.error(e);
+  res.status(500).send("Something went wrong"+ e.message);
+}
+};
+
 // fonction pour ajouté des livres "test" à la base de donnée mongo
 async function pushExistingBooks(books) {
     for (const book of books) {
@@ -60,4 +76,4 @@ async function pushExistingBooks(books) {
 
 
  // Exporter les fonctions
-module.exports = { getBooks, postBook };
+module.exports = { getBooks, postBook, getBookbyID};
