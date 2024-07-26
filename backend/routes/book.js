@@ -1,5 +1,5 @@
 const express = require('express');
-const { postBook, getBooks, getBookbyID, getBestRating} = require("../controllers/book.js")
+const { postBook, getBooks, getBookbyID, getBestRating, deleteBook} = require("../controllers/book.js")
 const {upload} = require('../middleware/multer.js')
 const auth = require('../middleware/auth');
 
@@ -8,7 +8,7 @@ booksRouter.get("/", getBooks);
 booksRouter.get("/bestrating", getBestRating);
 booksRouter.get("/:id", getBookbyID);
 booksRouter.post("/", auth, upload.single("image"), postBook);
-//booksRouter.delete("/:id",auth, deleteBook);
+booksRouter.delete("/:id",auth, deleteBook);
 //booksRouter.put("/:id", auth,updateBook);
 //booksRouter.post("/:id/rating",auth, rateBookbyID);
 

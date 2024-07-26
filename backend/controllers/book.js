@@ -14,7 +14,6 @@ const {upload} = require('../middleware/multer.js')
  
 
 // fonction afficher les livres
-app.get('/api/books', getBooks);
 async function getBooks(req,res) { 
     const databasebooks = await Book.find();
     res.send(databasebooks);
@@ -22,7 +21,7 @@ async function getBooks(req,res) {
 
 
 // fonction Ajouter un livre
-app.post('/api/books',upload.single("image"), postBook);
+
 async function postBook(req,res) {
     const file = req.file;
     const filename = file.filename;
@@ -72,6 +71,32 @@ res.send(bestrated);
 }
 }
 
+async function deleteBook(req, res) {
+const id = req.params.id;
+try {
+const book = await Book.findByIdAndDelete(id);
+if (book == null) {
+  res.status(404).send("Book not found");
+  return;
+}
+// vérifier que le client est la personne qui a créé le livre
+const bookuserId = book.userId;
+const clientuserId = req.auth.userId;
+if ( bookuserId != clientuserId) {
+  res.status(403).send("Ce livre n'est pas à vous!");
+  return;
+}
+// sinon
+res.send("Le livre associé à l'ID "+ id +" a été supprimé avec succès")
+} catch (e) {
+  console.error(e);
+  res.status(500).send("Something went wrong"+ e.message);
+}
+}
+
+
+
+
 // fonction pour ajouté des livres "test" à la base de donnée mongo
 async function pushExistingBooks(books) {
     for (const book of books) {
@@ -89,4 +114,4 @@ async function pushExistingBooks(books) {
 
 
  // Exporter les fonctions
-module.exports = { getBooks, postBook, getBookbyID, getBestRating};
+module.exports = { getBooks, postBook, getBookbyID, getBestRating, deleteBook};
