@@ -2,7 +2,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const { Book } = require('../models/book');
 const {testbooks} = require('../models/testbooks.js')
-const {upload} = require('../middleware/multer.js')
 
  const app = express();
  const cors = require("cors");
@@ -83,7 +82,7 @@ if (book == null) {
 const bookuserId = book.userId;
 const clientuserId = req.auth.userId;
 if ( bookuserId != clientuserId) {
-  res.status(403).send("Ce livre n'est pas à vous!");
+  res.status(403).send("Ce livre n'est pas le votre!");
   return;
 }
 // sinon
@@ -94,8 +93,31 @@ res.send("Le livre associé à l'ID "+ id +" a été supprimé avec succès")
 }
 }
 
-
-
+async function updateBook(req,res) {
+  const id = req.params.id;
+  const book = JSON.parse(req.body.book); 
+  const file = req.file;
+  try {
+  if (file != null ){
+    book.imageUrl = "http://localhost:4000/uploads/" + file.filename;
+  }
+  // vérifier que le client est la personne qui a créé le livre
+  const bookuserId = book.userId;
+  const clientuserId = req.auth.userId;
+  if ( bookuserId != clientuserId) {
+    res.status(403).send("Ce livre n'est pas le votre!");
+    return;
+  }
+  // sinon
+  await Book.findByIdAndUpdate(id,book);
+  res.send("Le livre "+ book.title +" a été modifié avec succès")
+  } catch (e) {
+    console.error(e);
+    res.status(500).send("Something went wrong "+ e.message);
+  }
+}
+  
+  
 
 // fonction pour ajouté des livres "test" à la base de donnée mongo
 async function pushExistingBooks(books) {
@@ -114,4 +136,4 @@ async function pushExistingBooks(books) {
 
 
  // Exporter les fonctions
-module.exports = { getBooks, postBook, getBookbyID, getBestRating, deleteBook};
+module.exports = { getBooks, postBook, getBookbyID, getBestRating, deleteBook, updateBook};
