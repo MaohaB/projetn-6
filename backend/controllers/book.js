@@ -111,7 +111,7 @@ async function updateBook(req,res) {
   // }
   // // sinon
 
-  
+
   await Book.findByIdAndUpdate(id,book);
   res.send("Le livre "+ book.title +" a été modifié avec succès")
   } catch (e) {
@@ -119,7 +119,64 @@ async function updateBook(req,res) {
     res.status(500).send("Something went wrong "+ e.message);
   }
 }
-  
+
+async function rateBookbyID(req,res){
+const params = req.params;
+const id = params.id;
+console.log('id',id);
+try {
+if (id == null){
+  res.status(400).send("Book ID not found");
+  return;
+}
+book = await Book.findById(id);
+if (book == null) {
+  res.status(400).send("Book not found");
+  return;
+}
+const newgrade = req.body.rating;
+console.log('New grade', newgrade);
+const ratingInDatabase = book.ratings;
+
+// vérifier que le client n'a pas déjà noté le livre
+const existingRating = ratingInDatabase.find((rating) => rating.userId == id);
+if (existingRating != null) {
+  res.status(400).send("Vous avez déjà noté ce livre!");
+  return;
+}
+const NewRating = { userId: id, grade: newgrade}
+ratingInDatabase.push(NewRating);
+book.ratings = ratingInDatabase;
+
+//Calculer la moyenne des notes
+book.averageRating = calculateAverageGrade(ratingInDatabase);
+console.log('nouvelle note moyenne', book.averageRating);
+
+await book.save();
+res.send("Le livre "+ book.title +" a maintenant une note de "+ book.averageRating )
+} catch (e) {
+  console.error(e);
+  res.status(500).send("Something went wrong "+ e.message);
+}
+}
+
+
+
+function calculateAverageGrade(ratingInDatabase) {
+  // Vérifier si l'objet est vide
+  if (ratingInDatabase.length === 0) {
+  res.status(400).send("Aucune note");
+  return;
+  }
+  // Calculer la somme des grades
+  const sum = Object.values(ratingInDatabase).reduce((acc, rating) => acc + rating.grade, 0);
+  // Calculer la moyenne
+  const average = sum / ratingInDatabase.length;
+
+  return average;
+}
+
+
   
 
 // fonction pour ajouté des livres "test" à la base de donnée mongo
@@ -139,4 +196,4 @@ async function pushExistingBooks(books) {
 
 
  // Exporter les fonctions
-module.exports = { getBooks, postBook, getBookbyID, getBestRating, deleteBook, updateBook};
+module.exports = { getBooks, postBook, getBookbyID, getBestRating, deleteBook, updateBook, rateBookbyID};
