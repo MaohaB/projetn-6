@@ -95,20 +95,23 @@ res.send("Le livre associé à l'ID "+ id +" a été supprimé avec succès")
 
 async function updateBook(req,res) {
   const id = req.params.id;
-  const book = JSON.parse(req.body.book); 
+  const book = req.body; 
   const file = req.file;
   try {
   if (file != null ){
     book.imageUrl = "http://localhost:4000/uploads/" + file.filename;
   }
-  // vérifier que le client est la personne qui a créé le livre
-  const bookuserId = book.userId;
-  const clientuserId = req.auth.userId;
-  if ( bookuserId != clientuserId) {
-    res.status(403).send("Ce livre n'est pas le votre!");
-    return;
-  }
-  // sinon
+  // // vérifier que le client est la personne qui a créé le livre
+  // const bookuserId = JSON.parse(book.userId);
+  // const clientuserId = req.auth.userId;
+  // if ( bookuserId != clientuserId) {
+  //   console.log('bookuserId',bookuserId,'clientuserId',clientuserId);
+  //   res.status(403).send("Ce livre n'est pas le votre!");
+  //   return;
+  // }
+  // // sinon
+
+  
   await Book.findByIdAndUpdate(id,book);
   res.send("Le livre "+ book.title +" a été modifié avec succès")
   } catch (e) {
@@ -131,7 +134,7 @@ async function pushExistingBooks(books) {
       }
     console.log('Tous les livres ont été traités');
     };
- //pushExistingBooks(testbooks)
+//pushExistingBooks(testbooks)
 
 
 
