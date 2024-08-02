@@ -101,16 +101,6 @@ async function updateBook(req,res) {
   if (file != null ){
     book.imageUrl = "http://localhost:4000/uploads/" + file.filename;
   }
-  // // vérifier que le client est la personne qui a créé le livre
-  // const bookuserId = JSON.parse(book.userId);
-  // const clientuserId = req.auth.userId;
-  // if ( bookuserId != clientuserId) {
-  //   console.log('bookuserId',bookuserId,'clientuserId',clientuserId);
-  //   res.status(403).send("Ce livre n'est pas le votre!");
-  //   return;
-  // }
-  // // sinon
-
 
   await Book.findByIdAndUpdate(id,book);
   res.send("Le livre "+ book.title +" a été modifié avec succès")
@@ -120,61 +110,73 @@ async function updateBook(req,res) {
   }
 }
 
-async function rateBookbyID(req,res){
-const params = req.params;
-const id = params.id;
-console.log('id',id);
-try {
-if (id == null){
-  res.status(400).send("Book ID not found");
-  return;
-}
-book = await Book.findById(id);
-if (book == null) {
-  res.status(400).send("Book not found");
-  return;
-}
-const newgrade = req.body.rating;
-console.log('New grade', newgrade);
-const ratingInDatabase = book.ratings;
+async function rateBookbyID(req, res) {
+  const bookId = req.params.id;
+  const userId = req.body.userId; // Assurez-vous que l'ID de l'utilisateur est envoyé dans le corps de la requête
+  const newGrade = req.body.rating;
 
-// vérifier que le client n'a pas déjà noté le livre
-const existingRating = ratingInDatabase.find((rating) => rating.userId == id);
-if (existingRating != null) {
-  res.status(400).send("Vous avez déjà noté ce livre!");
-  return;
-}
-const NewRating = { userId: id, grade: newgrade}
-ratingInDatabase.push(NewRating);
-book.ratings = ratingInDatabase;
-
-//Calculer la moyenne des notes
-book.averageRating = calculateAverageGrade(ratingInDatabase);
-console.log('nouvelle note moyenne', book.averageRating);
-
-await book.save();
-res.send("Le livre "+ book.title +" a maintenant une note de "+ book.averageRating )
-} catch (e) {
-  console.error(e);
-  res.status(500).send("Something went wrong "+ e.message);
-}
+  console.log('Book ID:', bookId);
+  console.log('User ID:', userId);
+ // Vérifier que la note est comprise entre 0 et 5
+ if (newGrade < 0 || newGrade > 5) {
+  return res.status(400).json({ message: "La note doit être comprise entre 0 et 5" });
 }
 
+  try {
+    if (!bookId) {
+      return res.status(400).send("Book ID not provided");
+    }
 
+    const book = await Book.findById(bookId);
+    if (!book) {
+      return res.status(404).send("Book not found");
+    }
 
-function calculateAverageGrade(ratingInDatabase) {
-  // Vérifier si l'objet est vide
-  if (ratingInDatabase.length === 0) {
-  res.status(400).send("Aucune note");
-  return;
+    // Vérifier que le client n'a pas déjà noté le livre
+    const existingRating = book.ratings.find(rating => rating.userId === userId);
+    if (existingRating) {
+      return res.status(403).json({
+        message: "Vous avez déjà noté ce livre",
+        book: {
+          id: book._id,
+          title: book.title,
+          author: book.author,
+          averageRating: book.averageRating,
+          ratings: book.ratings
+        }
+      });
+    }
+
+    // Ajouter la nouvelle note
+    const newRating = { userId: userId, grade: newGrade };
+    book.ratings.push(newRating);
+
+    // Calculer la nouvelle moyenne
+    book.averageRating = calculateAverageGrade(book.ratings);
+    console.log('Nouvelle note moyenne:', book.averageRating);
+
+    await book.save();
+
+    res.status(200).json({
+      message: `Le livre "${book.title}" a maintenant une note moyenne de ${book.averageRating}`,
+      book: book
+    });
+
+  } catch (error) {
+    console.error('Error in rateBookbyID:', error);
+    res.status(500).send("Something went wrong: " + error.message);
   }
-  // Calculer la somme des grades
-  const sum = Object.values(ratingInDatabase).reduce((acc, rating) => acc + rating.grade, 0);
-  // Calculer la moyenne
-  const average = sum / ratingInDatabase.length;
-
-  return average;
 }
+
+function calculateAverageGrade(ratings) {
+  if (ratings.length === 0) {
+    return 0;
+  }
+  const sum = ratings.reduce((acc, rating) => acc + rating.grade, 0);
+  return parseFloat((sum / ratings.length).toFixed(1));
+}
+
+
 
 
   
