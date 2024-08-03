@@ -21,9 +21,14 @@ app.use("/uploads", express.static("uploads"));
 // S'inscrire
 async function UserSignup(req,res) {
 const body = req.body;
-//console.log("body", body)
 const email = req.body.email
 const password = req.body.password
+
+// Vérifier que les champs ne sont pas vides
+if (!email || !password) {
+    res.status(400).send("Un email et un mot de passe sont obligatoires");
+    return;
+}
 
 const user = {
     email: email,
